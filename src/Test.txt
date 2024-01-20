@@ -1,0 +1,30 @@
+rm -rf tests *.a *.o *.gcda *.gcno *.gcov *.info *.html report
+gcc s21_*.c -c -lcheck -std=c11 -g -Wall -Werror -Wextra --coverage
+ar rc s21_string.a s21_*.o
+ranlib s21_string.a
+gcc tests*.c -c -lcheck -std=c11 -g -Wall -Werror -Wextra --coverage
+gcc tests*.o s21_string.a -o tests -lcheck --coverage -std=c11 -g -Wall -Werror -Wextra -lsubunit -lm -lgcov
+./tests
+Running suite(s): s21_string
+95%: Checks: 430, Failures: 21, Errors: 0
+tests.c:2422:F:sprintf_new:test_u_13:0: Assertion 'str1 == str2' failed: str1 == "858158158000000", str2 == "000000858158158"
+tests.c:2583:F:sprintf_new:test_ox_4:0: Assertion 'str1 == str2' failed: str1 == "334740000000000000000000000000000000000000000000000", str2 == "000000000000000000000000000000000000000000000033474"
+tests.c:2667:F:sprintf_new:test_ox_11:0: Assertion 's21_sprintf(str1, format, val) == sprintf(str2, format, val)' failed: s21_sprintf(str1, format, val) == 12, sprintf(str2, format, val) == 10
+tests.c:2691:F:sprintf_new:test_ox_13:0: Assertion 's21_sprintf(str1, format, val, val, val, val, val, val) == sprintf(str2, format, val, val, val, val, val, val)' failed: s21_sprintf(str1, format, val, val, val, val, val, val) == 56, sprintf(str2, format, val, val, val, val, val, val) == 54
+tests.c:2706:F:sprintf_new:test_ox_14:0: Assertion 'str1 == str2' failed: str1 == "0x3326744e00", str2 == "0x003326744e"
+tests.c:2752:F:sprintf_new:test_ox_18:0: Assertion 's21_sprintf(str1, format, val) == sprintf(str2, format, val)' failed: s21_sprintf(str1, format, val) == 4, sprintf(str2, format, val) == 3
+tests.c:2764:F:sprintf_new:test_ox_19:0: Assertion 's21_sprintf(str1, format, val) == sprintf(str2, format, val)' failed: s21_sprintf(str1, format, val) == 32, sprintf(str2, format, val) == 30
+tests.c:2985:F:sprintf_new:test_ox_35:0: Assertion 's21_sprintf(str1, "%#*x%*x%-12x%3x%*x", 9, 127312897, 0, -1, 199, -123978, 3, -1251) == sprintf(str2, "%#*x%*x%-12x%3x%*x", 9, 127312897, -0, -1, 199, -123978, 3, -1251)' failed: s21_sprintf(str1, "%#*x%*x%-12x%3x%*x", 9, 127312897, 0, -1, 199, -123978, 3, -1251) == 47, sprintf(str2, "%#*x%*x%-12x%3x%*x", 9, 127312897, -0, -1, 199, -123978, 3, -1251) == 45
+tests.c:2997:F:sprintf_new:test_ox_36:0: Assertion 's21_sprintf(str1, "%#*X%*X%-12X%3X%*X", 9, 127312897, 0, -1, 199, -123978, 3, -1251) == sprintf(str2, "%#*X%*X%-12X%3X%*X", 9, 127312897, 0, -1, 199, -123978, 3, -1251)' failed: s21_sprintf(str1, "%#*X%*X%-12X%3X%*X", 9, 127312897, 0, -1, 199, -123978, 3, -1251) == 47, sprintf(str2, "%#*X%*X%-12X%3X%*X", 9, 127312897, 0, -1, 199, -123978, 3, -1251) == 45
+tests.c:3141:F:sprintf_new:test_ox_50:0: Assertion 's21_sprintf(str1, format, val, val2) == sprintf(str2, format, val, val2)' failed: s21_sprintf(str1, format, val, val2) == 33, sprintf(str2, format, val, val2) == 32
+tests.c:3154:F:sprintf_new:test_ox_51:0: Assertion 's21_sprintf(str1, format, val, val2) == sprintf(str2, format, val, val2)' failed: s21_sprintf(str1, format, val, val2) == 33, sprintf(str2, format, val, val2) == 30
+tests.c:3232:F:sprintf_new:test_ox_57:0: Assertion 's21_sprintf(str1, format, val, val2) == sprintf(str2, format, val, val2)' failed: s21_sprintf(str1, format, val, val2) == 43, sprintf(str2, format, val, val2) == 40
+tests.c:3245:F:sprintf_new:test_ox_58:0: Assertion 's21_sprintf(str1, format, val, val2) == sprintf(str2, format, val, val2)' failed: s21_sprintf(str1, format, val, val2) == 43, sprintf(str2, format, val, val2) == 40
+tests.c:3258:F:sprintf_new:test_ox_59:0: Assertion 's21_sprintf(str1, format, val, val2) == sprintf(str2, format, val, val2)' failed: s21_sprintf(str1, format, val, val2) == 43, sprintf(str2, format, val, val2) == 40
+tests.c:3271:F:sprintf_new:test_ox_60:0: Assertion 's21_sprintf(str1, format, 20, 15, val, 20, 15, val2) == sprintf(str2, format, 20, 15, val, 20, 15, val2)' failed: s21_sprintf(str1, format, 20, 15, val, 20, 15, val2) == 43, sprintf(str2, format, 20, 15, val, 20, 15, val2) == 40
+tests.c:3498:F:sprintf_new:test_s_3:0: Assertion 's21_sprintf(str1, format, val) == sprintf(str2, format, val)' failed: s21_sprintf(str1, format, val) == 29, sprintf(str2, format, val) == 15
+tests.c:3593:F:sprintf_new:test_s_11:0: Assertion 's21_sprintf(str1, format, "hello world") == sprintf(str2, format, "hello world")' failed: s21_sprintf(str1, format, "hello world") == 14, sprintf(str2, format, "hello world") == 7
+tests.c:3792:F:sprintf_new:test_f_8:0: Assertion 'str1 == str2' failed: str1 == "101.000000101.000000", str2 == "101.000000101.000001"
+tests.c:3831:F:sprintf_new:test_f_11:0: Assertion 'str1 == str2' failed: str1 == "-0.000139-55.169998-0.000139-55.169998", str2 == "-0.000139-55.169998-0.000139-55.170000"
+tests.c:3869:F:sprintf_new:test_f_15:0: Assertion 'str1 == str2' failed: str1 == "0.300000012 55.12 444.444000", str2 == "0.300000000 55.12 444.444000"
+tests.c:4383:F:sprintf_new:test_f_61:0: Assertion 'str1 == str2' failed: str1 == "-999.6660160.000100666.999023-100.000999", str2 == "-999.6660000.000100666.999000-100.001000"
