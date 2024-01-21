@@ -2,18 +2,22 @@
 
 #include <stdio.h>
 
-// int main(){
-//  char str1[BUFSIZE];
-//   char str2[BUFSIZE];
 
-// char *format = "%#-5.15x%#-5.15o";
-//   unsigned val = 858158158;
-//   unsigned val2 = 858158158;
-//   s21_sprintf(str1, format, val);
-//   sprintf(str2, format, val);
-//   printf("s21_sprintf: '%s'\n", str1);
-//   printf("    sprintf: '%s'\n", str2);
+// int main (){
+//   char str1[200] = "";
+//   char str2[200] = "";
+//   char *str3 = "<% s><% 3.s><% 5.7s><% 10s GOD %.s>";
+//   char *val = "WHAT IS THIS>";
+//   char *val2 = "i don't care anymore, really";
+//   char *val3 = "PPAP";
+//   char *val4 = "I don't feel so good";
+//   char *val5 = "What is lovin'?!";
+//   printf("s21_sprintf: '%d'\n", s21_sprintf(str2, str3, val, val2, val3, val4, val5));
+//   printf("    sprintf: '%d'\n", sprintf(str1, str3, val, val2, val3, val4, val5));
+//   printf("s21_sprintf: '%s'\n", str2);
+//   printf("    sprintf: '%s'\n", str1);
 // }
+
 
 int s21_sprintf(char *str, const char *format, ...) {
   char *s_start = str;
@@ -401,27 +405,52 @@ char *print_string(char *str, options *opt, va_list *arguments) {
   int i = 0;
   int width_temp = opt->width;
   int prec_temp = opt->prec;
-  if (opt->width < len_of_string) opt->width = len_of_string;
-  int diff = opt->width - len_of_string;
+  int diff = 0;
+
+  if (opt->dot || opt->prec || opt->width){
+  // если ширина меньше длины строки, то ширина становится длиной строки и не 15% (не только ширина)
+  if (opt->width < len_of_string && opt->dot)  
+  len_of_string = opt->width ; // возможно тут
+  // если не 15% (не только ширина)
+  if (!(opt->width && !opt->dot && !opt->prec)){
+      if (opt->prec <= len_of_string){
+          len_of_string = opt->prec; //сюда 
+      }
+
+  }
+
+  // чтобы знать скок пробелов печатать
+  diff = opt->width - len_of_string;
   if (opt->prec == 0) {
-    opt->prec = opt->width;
+    opt->prec = opt->width; //проверить
   } else {
     if (opt->prec < width_temp) {
-      diff = width_temp - opt->prec;
+      diff = width_temp - opt->prec; // если точность меньше ширины (например 4.2), то разница (кол-во)
+      // необходимых пробелов равна разнице (то есть в случае с 4.2 2 символа печатаем из строки и 2 пробелами заполняем 
+      // чтобы добить ширину)
     }
   }
+  // если установлена точность (опт дот), если ширина и нет точности, но есть точка (то есть 4.)
   while (opt->dot && width_temp && !prec_temp) {
     *str = ' ';
     str++;
     width_temp--;
   }
+  // если есть разница и НЕТ выравнивания по левому краю и 
+  // (нет точки или (есть точность и точка))
   while (diff > 0 && opt->minus == 0 &&
          (!opt->dot || (prec_temp && opt->dot))) {
     *str = ' ';
     str++;
     diff--;
   }
+  // если нет ширины но есть точность (.5)
   if (prec_temp > 0 && width_temp == 0) len_of_string = prec_temp;
+  // записываем столько символов сколько посчитали в лен оф стринг
+  // при условии что у нас либо нет точки либо есть нормальная точность 
+  // если например 4. то сюда не заходим 
+  }
+
   while (i < len_of_string && (!opt->dot || (prec_temp && opt->dot))) {
     *str = string[i];  //посимвольно копируем
     str++;
