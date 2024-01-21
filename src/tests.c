@@ -486,6 +486,21 @@ START_TEST(s21_sprintf_s) {
 }
 END_TEST
 
+START_TEST(s21_sprintf_s2) {
+  char str1[200] = "";
+  char str2[200] = "";
+  char *str3 = "<% s><% .9s><% 5.7s><% 10s GOD %.s>";
+  char *val = "WHAT IS THIS>";
+  char *val2 = "i don't";
+  char *val3 = "PPAP";
+  char *val4 = "I don't feel so good";
+  char *val5 = "What is lovin'?!";
+  ck_assert_int_eq(sprintf(str1, str3, val, val2, val3, val4, val5),
+                   s21_sprintf(str2, str3, val, val2, val3, val4, val5));
+  ck_assert_pstr_eq(str1, str2);
+}
+END_TEST
+
 START_TEST(s21_sprintf_u) {
   char str1[200] = "";
   char str2[200] = "";
@@ -5740,6 +5755,7 @@ Suite *s21_string_suite() {
   tcase_add_test(tc_sprintf, s21_sprintf_f);
   tcase_add_test(tc_sprintf, s21_sprintf_i);
   tcase_add_test(tc_sprintf, s21_sprintf_s);
+  tcase_add_test(tc_sprintf, s21_sprintf_s2);
   tcase_add_test(tc_sprintf, s21_sprintf_h);
   tcase_add_test(tc_sprintf, s21_sprintf_l);
   tcase_add_test(tc_sprintf, s21_sprintf_empty);

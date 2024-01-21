@@ -6,9 +6,9 @@
 // int main (){
 //   char str1[200] = "";
 //   char str2[200] = "";
-//   char *str3 = "<% s><% 3.s><% 5.7s><% 10s GOD %.s>";
+//   char *str3 = "<% s><% .9s><% 5.7s><% 10s GOD %.s>";
 //   char *val = "WHAT IS THIS>";
-//   char *val2 = "i don't care anymore, really";
+//   char *val2 = "i don't";
 //   char *val3 = "PPAP";
 //   char *val4 = "I don't feel so good";
 //   char *val5 = "What is lovin'?!";
@@ -409,43 +409,47 @@ char *print_string(char *str, options *opt, va_list *arguments) {
 
   if (opt->dot || opt->prec || opt->width){
   // если ширина меньше длины строки, то ширина становится длиной строки и не 15% (не только ширина)
-  if (opt->width < len_of_string && opt->dot)  
+  if (opt->width < len_of_string && opt->dot ){
+  if (!(opt->prec > 0 && opt->width == 0)){
   len_of_string = opt->width ; // возможно тут
+  }
+  }
+
   // если не 15% (не только ширина)
   if (!(opt->width && !opt->dot && !opt->prec)){
       if (opt->prec <= len_of_string){
           len_of_string = opt->prec; //сюда 
       }
-
   }
-
   // чтобы знать скок пробелов печатать
   diff = opt->width - len_of_string;
   if (opt->prec == 0) {
-    opt->prec = opt->width; //проверить
+    opt->prec = opt->width;
   } else {
     if (opt->prec < width_temp) {
-      diff = width_temp - opt->prec; // если точность меньше ширины (например 4.2), то разница (кол-во)
-      // необходимых пробелов равна разнице (то есть в случае с 4.2 2 символа печатаем из строки и 2 пробелами заполняем 
-      // чтобы добить ширину)
+      diff = width_temp - opt->prec; 
+      // если точность меньше ширины, то кол-во пробелов равно разнице ширины и точности
     }
   }
-  // если установлена точность (опт дот), если ширина и нет точности, но есть точка (то есть 4.)
+  // если есть точка, ширина и нет точности (то есть 4.)
   while (opt->dot && width_temp && !prec_temp) {
     *str = ' ';
     str++;
     width_temp--;
   }
-  // если есть разница и НЕТ выравнивания по левому краю и 
-  // (нет точки или (есть точность и точка))
+  // если есть разница и НЕТ выравнивания по левому краю
   while (diff > 0 && opt->minus == 0 &&
          (!opt->dot || (prec_temp && opt->dot))) {
     *str = ' ';
     str++;
     diff--;
   }
+
+
   // если нет ширины но есть точность (.5)
-  if (prec_temp > 0 && width_temp == 0) len_of_string = prec_temp;
+  if (prec_temp > 0 && width_temp == 0) 
+  if ( prec_temp <= len_of_string)
+  len_of_string = prec_temp;
   // записываем столько символов сколько посчитали в лен оф стринг
   // при условии что у нас либо нет точки либо есть нормальная точность 
   // если например 4. то сюда не заходим 
