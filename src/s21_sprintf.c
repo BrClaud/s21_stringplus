@@ -4,18 +4,17 @@
 
 
 // int main (){
-//   char str1[200] = "";
-//   char str2[200] = "";
-//   char *str3 = "<% s><% .9s><% 5.7s><% 10s GOD %.s>";
-//   char *val = "WHAT IS THIS>";
-//   char *val2 = "i don't";
-//   char *val3 = "PPAP";
-//   char *val4 = "I don't feel so good";
-//   char *val5 = "What is lovin'?!";
-//   printf("s21_sprintf: '%d'\n", s21_sprintf(str2, str3, val, val2, val3, val4, val5));
-//   printf("    sprintf: '%d'\n", sprintf(str1, str3, val, val2, val3, val4, val5));
-//   printf("s21_sprintf: '%s'\n", str2);
-//   printf("    sprintf: '%s'\n", str1);
+//   char str1[BUFSIZE];
+//   char str2[BUFSIZE];
+//   int n1;
+//   int n2;
+// s21_sprintf(str1, "%d%n", 123, &n1);
+// sprintf(str2, "%d%n", 123, &n2);
+
+//   printf("s21_sprintf: '%d'\n", n1);
+//   printf("    sprintf: '%d'\n", n2);
+//   printf("s21_sprintf: '%s'\n", str1);
+//   printf("    sprintf: '%s'\n", str2);
 // }
 
 
@@ -471,7 +470,8 @@ char *print_string(char *str, options *opt, va_list *arguments) {
 
 void process_n(char *str, va_list *arguments) {
   int *pointer_int = va_arg(*arguments, int *);
-  *pointer_int = s21_strlen(str);  // передаем указатель на строку str
+  s21_size_t la = s21_strlen(str); 
+  *pointer_int = la; // передаем указатель на строку str
 }
 
 char *print_unsigned(char *str, options *opt, va_list *arguments,
@@ -487,7 +487,7 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
   char buff_number[BUFSIZE] = {'\0'};
 
   if (!number) opt->var_null = 1;  // для нуля
-
+  s21_size_t z = 0;
   if (*format == 'x' || *format == 'X')
     int_to_hex(number, buff_number, opt);
   else if (*format == 'u')
@@ -496,17 +496,21 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
     int_to_oct(number, buff_number, opt);
   if (opt->notation && opt->specificator != 'u' && number != 0 && opt->minus == 1) { //добавила тут условие с opt->minus для того, чтобы когда у нас нет данного условия НЕ печатало так: 0x    234
     *(str++) = '0';
+    //костыль для теста 50 и 51 ксюша прости
+    if (opt->specificator == 'o') 
+    z++;
     if (*format == 'x' || *format == 'X') {
       *(str++) = opt->uppercase ? 'X' : 'x';
     }
   }
-  s21_size_t z = 0;
+
   // размер строки изначаьлный "123" == 3
-  z = (s21_size_t)s21_strlen(buff_number);
+  z += (s21_size_t)s21_strlen(buff_number);
   // размер строки учитывая точность ширину и прочее
   s21_size_t siz = get_size_u(opt, z);
   // if (opt->notation && opt->specificator != 'u' && number != 0) siz +=2;
-  if(opt->minus == 0 || (((int)opt->prec-(int)s21_strlen(buff_number)>0 || opt->zero) && opt->minus)) str = print_diff_for_u(str, opt, &z, &siz, &number); //в гс объясняла, добавила еще number, чтобы проверить для 0x
+  if(opt->minus == 0 || (((int)opt->prec-(int)s21_strlen(buff_number)>0 || opt->zero) && opt->minus)) 
+  str = print_diff_for_u(str, opt, &z, &siz, &number); //в гс объясняла, добавила еще number, чтобы проверить для 0x
   // в цикле записывается наше число
   if (!(opt->is_precision && opt->prec == 0 && opt->width == 0) ||
       !opt->var_null) {
@@ -515,7 +519,12 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
       str++;
     }
   }
-  if (opt->minus == 1) str = print_diff_for_u(str, opt, &z, &siz, &number);
+  if (opt->minus == 1) {
+    if (opt->specificator == 'o' && (opt->notation && opt->specificator != 'u' && number != 0 && opt->minus == 1)){
+      z--; //костыль для теста 50 и 51 ксюша прости
+    }
+    str = print_diff_for_u(str, opt, &z, &siz, &number);
+  }
   return str;
 }
 
@@ -553,7 +562,8 @@ char *print_diff_for_u(char *str, options *opt, s21_size_t * dif,
     dif_width_prec--;
   }
 
-    if (opt->notation && opt->specificator != 'u' && *number != 0 && opt->minus == 0) { // можно вынести в функцию мб, добавила чтобы сначала пробелы печатались, а потом 0x
+    if (opt->notation && opt->specificator != 'u' && *number != 0 && opt->minus == 0) { 
+      // можно вынести в функцию мб, добавила чтобы сначала пробелы печатались, а потом 0x
     *(str++) = '0';
     if (opt->specificator == 'x' || opt->specificator == 'X') {
       *(str++) = opt->uppercase ? 'X' : 'x';
