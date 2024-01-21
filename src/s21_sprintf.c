@@ -1,13 +1,15 @@
 #include "s21_string.h"
 
-// #include <stdio.h>
+#include <stdio.h>
 
 // int main(){
-//   char str1[256];
-//   char str2[256];
-//   char *format = "%+12d";
-//   int val = 79;
-//   s21_sprintf(str1, format, val),
+//  char str1[BUFSIZE];
+//   char str2[BUFSIZE];
+
+// char *format = "%#-5.15x%#-5.15o";
+//   unsigned val = 858158158;
+//   unsigned val2 = 858158158;
+//   s21_sprintf(str1, format, val);
 //   sprintf(str2, format, val);
 //   printf("s21_sprintf: '%s'\n", str1);
 //   printf("    sprintf: '%s'\n", str2);
@@ -459,18 +461,19 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
     unsignedint_to_char(number, buff_number, opt);
   else if (*format == 'o')
     int_to_oct(number, buff_number, opt);
-  if (opt->notation && opt->specificator != 'u' && number != 0) {
+  if (opt->notation && opt->specificator != 'u' && number != 0 && opt->minus == 1) { //добавила тут условие с opt->minus для того, чтобы когда у нас нет данного условия НЕ печатало так: 0x    234
     *(str++) = '0';
     if (*format == 'x' || *format == 'X') {
       *(str++) = opt->uppercase ? 'X' : 'x';
     }
   }
-  int z = 0;
+  s21_size_t z = 0;
   // размер строки изначаьлный "123" == 3
-  z = (int)s21_strlen(buff_number);
+  z = (s21_size_t)s21_strlen(buff_number);
   // размер строки учитывая точность ширину и прочее
   s21_size_t siz = get_size_u(opt, z);
-  if (opt->minus == 0) str = print_diff_for_u(str, opt, z, siz);
+  // if (opt->notation && opt->specificator != 'u' && number != 0) siz +=2;
+  if(opt->minus == 0 || (((int)opt->prec-(int)s21_strlen(buff_number)>0 || opt->zero) && opt->minus)) str = print_diff_for_u(str, opt, &z, &siz, &number); //в гс объясняла, добавила еще number, чтобы проверить для 0x
   // в цикле записывается наше число
   if (!(opt->is_precision && opt->prec == 0 && opt->width == 0) ||
       !opt->var_null) {
@@ -479,44 +482,69 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
       str++;
     }
   }
-  if (opt->minus == 1) str = print_diff_for_u(str, opt, z, siz);
+  if (opt->minus == 1) str = print_diff_for_u(str, opt, &z, &siz, &number);
   return str;
 }
 
 /*Вывод разницы для однознакогового числа, dif - длина числа, siz - общаяя длина
  * буфера*/
-char *print_diff_for_u(char *str, options *opt, s21_size_t dif,
-                       s21_size_t siz) {
+char *print_diff_for_u(char *str, options *opt, s21_size_t * dif,
+                       s21_size_t * siz, s21_size_t * number) {
   int d =
-      siz - dif;  // разница между полным и тем что мы имеем "000123" например
+      (*siz) - *dif;  // разница между полным и тем что мы имеем "000123" например
   if (d < 0) {
     d = 0;
   }
 
-  if (siz == 1 && opt->zero == 1 && opt->sign == 1)
+  if (*siz == 1 && opt->zero == 1 && opt->sign == 1)
     opt->zero = 0;  // для флага ноль - страховка
+  
   int dif_width_prec = opt->width - opt->prec;
+  if (opt->notation && opt->specificator != 'u' && *number != 0) {
+    if (dif_width_prec > 0) {
+       d -=1;
+       *siz -= 1;
+       if (opt->specificator=='X' || opt->specificator == 'x'){
+        d -=1;
+        *siz -=1;
+        dif_width_prec -=2;
+       }
+    }
+  } //для 0x, чтобы лишние пробелы не записывал
   // если ширина больше чем точность
-  while (dif_width_prec-- > 0 && d) {
+  while (dif_width_prec > 0 && d > 0) { // сделала d>0, было просто : d, из-за этого при d<0 заходило в цикл
     *str = ' ';
     str++;
     d--;
+    (*siz)--;
+    dif_width_prec--;
   }
-  while ((opt->zero && d) || (opt->is_precision && d)) {
-    if (siz == 1 && opt->sign == 1) {
+
+    if (opt->notation && opt->specificator != 'u' && *number != 0 && opt->minus == 0) { // можно вынести в функцию мб, добавила чтобы сначала пробелы печатались, а потом 0x
+    *(str++) = '0';
+    if (opt->specificator == 'x' || opt->specificator == 'X') {
+      *(str++) = opt->uppercase ? 'X' : 'x';
+    }
+  }
+
+  while ((opt->zero && d > 0) || (opt->prec - *dif > 0 && d > 0)) { // сделала d>0
+    if (*siz == 1 && opt->sign == 1) {
       break;
     }
     char sum = '0';
     *str = sum;
     str++;
     d--;
-    siz--;
+    (*dif)++; // так как сколько напечатает символов 0 связано с этой переменной
+    (*siz)--; 
   }
+  
   if (opt->zero == 0) {
     while (d > 0) {
       *str = ' ';
       str++;
       d--;
+      (*siz)--;
     }
   }
   return str;
@@ -971,3 +999,4 @@ void s21_itoa(char *buf, options *opt, long int var) {
   }
   buf[i] = 0;
 }
+

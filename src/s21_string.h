@@ -107,7 +107,7 @@ void rewrite(int *i, char sum, s21_size_t size_to_decimal, char *str_nun);
 char *print_diff_for_char(char *str, options *opt, va_list *arguments);
 char *print_diff(char *str, options *opt, int dif);
 s21_size_t get_size_u(options *opt, int i);
-char *print_diff_for_u(char *str, options *opt, s21_size_t dif, s21_size_t siz);
+char *print_diff_for_u(char *str, options *opt, s21_size_t * dif, s21_size_t * siz, s21_size_t * number);
 
 char *print_char(char *str, va_list *arguments);
 char *print_string(char *str, options *opt, va_list *arguments);
