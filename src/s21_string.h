@@ -112,6 +112,9 @@ char *print_diff_for_u(char *str, options *opt, s21_size_t *dif,
 
 char *print_char(char *str, va_list *arguments);
 char *print_string(char *str, options *opt, va_list *arguments);
+void process_width_prec_for_string(char **str, options *opt, int *prec_temp,
+                                     int *width_temp, int *diff,
+                                     int *len_of_string);
 void process_n(char *str, va_list *arguments);
 
 void prec_for_g_spec(options *opt, long double *var_double);

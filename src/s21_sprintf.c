@@ -391,57 +391,11 @@ char *print_diff_for_char(char *str, options *opt, va_list *arguments) {
 char *print_string(char *str, options *opt, va_list *arguments) {
   char *string = (char *)va_arg(*arguments, char *);
   int len_of_string = (int)s21_strlen(string);
-  int i = 0;
-  int width_temp = opt->width;
-  int prec_temp = opt->prec;
-  int diff = 0;
-
+  int i = 0, diff = 0;
+  int width_temp = opt->width, prec_temp = opt->prec;
   if (opt->dot || opt->prec || opt->width) {
-    // если ширина меньше длины строки, то ширина становится длиной строки и не
-    // 15% (не только ширина)
-    if (opt->width < len_of_string && opt->dot) {
-      if (!(opt->prec > 0 && opt->width == 0)) {
-        len_of_string = opt->width;  // возможно тут
-      }
-    }
-
-    // если не 15% (не только ширина)
-    if (!(opt->width && !opt->dot && !opt->prec)) {
-      if (opt->prec <= len_of_string) {
-        len_of_string = opt->prec;  //сюда
-      }
-    }
-    // чтобы знать скок пробелов печатать
-    diff = opt->width - len_of_string;
-    if (opt->prec == 0) {
-      opt->prec = opt->width;
-    } else {
-      if (opt->prec < width_temp) {
-        diff = width_temp - opt->prec;
-        // если точность меньше ширины, то кол-во пробелов равно разнице ширины
-        // и точности
-      }
-    }
-    // если есть точка, ширина и нет точности (то есть 4.)
-    while (opt->dot && width_temp && !prec_temp) {
-      *str = ' ';
-      str++;
-      width_temp--;
-    }
-    // если есть разница и НЕТ выравнивания по левому краю
-    while (diff > 0 && opt->minus == 0 &&
-           (!opt->dot || (prec_temp && opt->dot))) {
-      *str = ' ';
-      str++;
-      diff--;
-    }
-
-    // если нет ширины но есть точность (.5)
-    if (prec_temp > 0 && width_temp == 0)
-      if (prec_temp <= len_of_string) len_of_string = prec_temp;
-    // записываем столько символов сколько посчитали в лен оф стринг
-    // при условии что у нас либо нет точки либо есть нормальная точность
-    // если например 4. то сюда не заходим
+    process_width_prec_for_string(&str, opt, &prec_temp, &width_temp, &diff,
+                                  &len_of_string);
   }
 
   while (i < len_of_string && (!opt->dot || (prec_temp && opt->dot))) {
@@ -449,13 +403,61 @@ char *print_string(char *str, options *opt, va_list *arguments) {
     str++;
     i++;
   }
+
   while (diff > 0 && opt->minus == 1 &&
          (!opt->dot || (prec_temp && opt->dot))) {
-    *str = ' ';
+    *str = ' ';  // дописываем пробелы
     str++;
     diff--;
   }
   return str;
+}
+
+void process_width_prec_for_string(char **str, options *opt, int *prec_temp,
+                                   int *width_temp, int *diff,
+                                   int *len_of_string) {
+  // если ширина меньше длины строки, то ширина становится длиной строки и не
+  // 15% (не только ширина)
+  if (opt->width < *len_of_string && opt->dot) {
+    if (!(opt->prec > 0 && opt->width == 0)) {
+      *len_of_string = opt->width;
+    }
+  }
+  // если не 15% (не только ширина)
+  if (!(opt->width && !opt->dot && !opt->prec)) {
+    if (opt->prec <= *len_of_string) {
+      *len_of_string = opt->prec;
+    }
+  }
+  // чтобы знать скок пробелов печатать
+  *diff = opt->width - *len_of_string;
+  if (opt->prec == 0) {
+    opt->prec = opt->width;
+  } else {
+    if (opt->prec < *width_temp) {
+      *diff = *width_temp - opt->prec;
+      // если точность меньше ширины, то кол-во пробелов равно их разнице
+    }
+  }
+  // если есть точка, ширина и нет точности (то есть 4.)
+  while (opt->dot && *width_temp && !*prec_temp) {
+    **str = ' ';
+    (*str)++;
+    (*width_temp)--;
+  }
+  // если есть разница и НЕТ выравнивания по левому краю
+  while (*diff > 0 && opt->minus == 0 &&
+         (!opt->dot || (*prec_temp && opt->dot))) {
+    **str = ' ';
+    (*str)++;
+    (*diff)--;
+  }
+  // если нет ширины но есть точность (.5)
+  if (*prec_temp > 0 && *width_temp == 0) {
+    // если длина строки больше точности то печатаем по точности, а если
+    // меньше, то печатаем сколько есть символов (проблеами не дополняем)
+    if (*prec_temp <= *len_of_string) *len_of_string = *prec_temp;
+  }
 }
 
 void process_n(char *str, va_list *arguments) {
