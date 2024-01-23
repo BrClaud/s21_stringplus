@@ -1,14 +1,12 @@
-#include "s21_string.h"
-
 #include <stdio.h>
 
+#include "s21_string.h"
 
 // int main (){
 //   char str1[BUFSIZE];
 //   char str2[BUFSIZE];
 //   char format[] = "%f %f";
 //   float val = 101.0000006;
-
 
 //   printf("s21_sprintf: '%d'\n", s21_sprintf(str1, format, val, 101.0000006));
 //   printf("    sprintf: '%d'\n", sprintf(str2, format, val, 101.0000006));
@@ -188,12 +186,11 @@ s21_size_t get_size_to_decimal(options *opt, long int *nun) {
   if ((cp_nun == 0 && res == 0) && (opt->prec || opt->space || opt->width)) {
     res++;  // проверка если nun = 0
   }
-  
+
   if (res == 0 && cp_nun == 0 && !opt->prec && !opt->width && !opt->space &&
       !opt->dot) {
     res++;  //если ни одно из предыдущих условий не сработало и nun = 0
   }
-
 
   if ((s21_size_t)opt->prec > res) {
     res = opt->prec;  // тоже самое действие с точностью
@@ -203,17 +200,16 @@ s21_size_t get_size_to_decimal(options *opt, long int *nun) {
     res++;  // дополнительное место для + - или ' '
   }
   if ((s21_size_t)opt->width > res) {
-  res = opt->width;  // если определённая подсчётом длина меньше, чем данная в
-                      // форматной строке перед спецификатором, то присвоить
-                      // res длину данную в форм строке
+    res = opt->width;  // если определённая подсчётом длина меньше, чем данная в
+                       // форматной строке перед спецификатором, то присвоить
+                       // res длину данную в форм строке
   }
-  
 
   if (opt->dot == 1 && *nun == 0 && cp_nun == 0 && opt->prec == 0) {
     res = 1;
     opt->flag = 1;
   }
-  
+
   return res;
 }
 
@@ -224,23 +220,22 @@ int decimal_to_string(options *opt, long int *nun, char *str_nun,
     flag = 1;  // запоминаем что число отрицательное
     *nun = -(*nun);  // нам надо взять его модуль
   }
-  int i = 0;//счетчик сколько символов записано
-  
-  long int cp_nun = *nun;  
+  int i = 0;  //счетчик сколько символов записано
+
+  long int cp_nun = *nun;
   // работаем с копией числа
   write_decimal_to_char(opt, &cp_nun, &size_to_decimal, &i, str_nun, nun);
   //если число != 0
   if (flag == 1) {
     *nun = -(*nun);
   }
-  flag = 0; // допустим
-  if (opt->prec - i > 0) {  // если точность больше ширины числа то поднимаем флаг 0
-                            // чтобы заполнить нулями место
+  flag = 0;                 // допустим
+  if (opt->prec - i > 0) {  // если точность больше ширины числа то поднимаем
+                            // флаг 0 чтобы заполнить нулями место
     opt->prec -= i;
     opt->zero = 1;
-  }
-  else {
-    flag = 1; // надо думать TODO 
+  } else {
+    flag = 1;  // надо думать TODO
   }
   if (size_to_decimal == 1 && opt->zero == 1 &&
       opt->sign == 1) {  // если не хватает места под нули то вырубаем флаг
@@ -256,8 +251,8 @@ int decimal_to_string(options *opt, long int *nun, char *str_nun,
 
 void flag_0_decimal(options *opt, s21_size_t *size_to_decimal, char *str_nun,
                     int *i, int *flag) {
-
-  while (opt->zero && str_nun && (*size_to_decimal - opt->sign > 0) && (opt->prec > 0 || *flag)) {
+  while (opt->zero && str_nun && (*size_to_decimal - opt->sign > 0) &&
+         (opt->prec > 0 || *flag)) {
     if (*size_to_decimal == 1 && opt->sign == 1) {
       break;
     }
@@ -266,13 +261,11 @@ void flag_0_decimal(options *opt, s21_size_t *size_to_decimal, char *str_nun,
     (*i)++;
     (*size_to_decimal)--;
     opt->prec--;
-
   }
 }
 
 void flag_space_plus_minus_decimal(options *opt, s21_size_t *size_to_decimal,
                                    char *str_nun, int *i, long int *nun) {
-  
   if (*nun < 0 && *size_to_decimal) {
     char sum = '-';
     str_nun[*i] = sum;
@@ -284,9 +277,7 @@ void flag_space_plus_minus_decimal(options *opt, s21_size_t *size_to_decimal,
     str_nun[*i] = sum;
     (*i)++;
     (*size_to_decimal)--;
-  }
-  else
-  if (opt->space && *nun >= 0 && *size_to_decimal) {
+  } else if (opt->space && *nun >= 0 && *size_to_decimal) {
     char sum = ' ';
     str_nun[*i] = sum;
     (*i)++;
@@ -405,52 +396,52 @@ char *print_string(char *str, options *opt, va_list *arguments) {
   int prec_temp = opt->prec;
   int diff = 0;
 
-  if (opt->dot || opt->prec || opt->width){
-  // если ширина меньше длины строки, то ширина становится длиной строки и не 15% (не только ширина)
-  if (opt->width < len_of_string && opt->dot ){
-  if (!(opt->prec > 0 && opt->width == 0)){
-  len_of_string = opt->width ; // возможно тут
-  }
-  }
-
-  // если не 15% (не только ширина)
-  if (!(opt->width && !opt->dot && !opt->prec)){
-      if (opt->prec <= len_of_string){
-          len_of_string = opt->prec; //сюда 
+  if (opt->dot || opt->prec || opt->width) {
+    // если ширина меньше длины строки, то ширина становится длиной строки и не
+    // 15% (не только ширина)
+    if (opt->width < len_of_string && opt->dot) {
+      if (!(opt->prec > 0 && opt->width == 0)) {
+        len_of_string = opt->width;  // возможно тут
       }
-  }
-  // чтобы знать скок пробелов печатать
-  diff = opt->width - len_of_string;
-  if (opt->prec == 0) {
-    opt->prec = opt->width;
-  } else {
-    if (opt->prec < width_temp) {
-      diff = width_temp - opt->prec; 
-      // если точность меньше ширины, то кол-во пробелов равно разнице ширины и точности
     }
-  }
-  // если есть точка, ширина и нет точности (то есть 4.)
-  while (opt->dot && width_temp && !prec_temp) {
-    *str = ' ';
-    str++;
-    width_temp--;
-  }
-  // если есть разница и НЕТ выравнивания по левому краю
-  while (diff > 0 && opt->minus == 0 &&
-         (!opt->dot || (prec_temp && opt->dot))) {
-    *str = ' ';
-    str++;
-    diff--;
-  }
 
+    // если не 15% (не только ширина)
+    if (!(opt->width && !opt->dot && !opt->prec)) {
+      if (opt->prec <= len_of_string) {
+        len_of_string = opt->prec;  //сюда
+      }
+    }
+    // чтобы знать скок пробелов печатать
+    diff = opt->width - len_of_string;
+    if (opt->prec == 0) {
+      opt->prec = opt->width;
+    } else {
+      if (opt->prec < width_temp) {
+        diff = width_temp - opt->prec;
+        // если точность меньше ширины, то кол-во пробелов равно разнице ширины
+        // и точности
+      }
+    }
+    // если есть точка, ширина и нет точности (то есть 4.)
+    while (opt->dot && width_temp && !prec_temp) {
+      *str = ' ';
+      str++;
+      width_temp--;
+    }
+    // если есть разница и НЕТ выравнивания по левому краю
+    while (diff > 0 && opt->minus == 0 &&
+           (!opt->dot || (prec_temp && opt->dot))) {
+      *str = ' ';
+      str++;
+      diff--;
+    }
 
-  // если нет ширины но есть точность (.5)
-  if (prec_temp > 0 && width_temp == 0) 
-  if ( prec_temp <= len_of_string)
-  len_of_string = prec_temp;
-  // записываем столько символов сколько посчитали в лен оф стринг
-  // при условии что у нас либо нет точки либо есть нормальная точность 
-  // если например 4. то сюда не заходим 
+    // если нет ширины но есть точность (.5)
+    if (prec_temp > 0 && width_temp == 0)
+      if (prec_temp <= len_of_string) len_of_string = prec_temp;
+    // записываем столько символов сколько посчитали в лен оф стринг
+    // при условии что у нас либо нет точки либо есть нормальная точность
+    // если например 4. то сюда не заходим
   }
 
   while (i < len_of_string && (!opt->dot || (prec_temp && opt->dot))) {
@@ -469,8 +460,8 @@ char *print_string(char *str, options *opt, va_list *arguments) {
 
 void process_n(char *str, va_list *arguments) {
   int *pointer_int = va_arg(*arguments, int *);
-  s21_size_t la = s21_strlen(str); 
-  *pointer_int = la; // передаем указатель на строку str
+  s21_size_t la = s21_strlen(str);
+  *pointer_int = la;  // передаем указатель на строку str
 }
 
 char *print_unsigned(char *str, options *opt, va_list *arguments,
@@ -493,11 +484,13 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
     unsignedint_to_char(number, buff_number, opt);
   else if (*format == 'o')
     int_to_oct(number, buff_number, opt);
-  if (opt->notation && opt->specificator != 'u' && number != 0 && opt->minus == 1) { //добавила тут условие с opt->minus для того, чтобы когда у нас нет данного условия НЕ печатало так: 0x    234
+  if (opt->notation && opt->specificator != 'u' && number != 0 &&
+      opt->minus ==
+          1) {  //добавила тут условие с opt->minus для того, чтобы когда у нас
+                //нет данного условия НЕ печатало так: 0x    234
     *(str++) = '0';
     //костыль для теста 50 и 51 ксюша прости
-    if (opt->specificator == 'o') 
-    z++;
+    if (opt->specificator == 'o') z++;
     if (*format == 'x' || *format == 'X') {
       *(str++) = opt->uppercase ? 'X' : 'x';
     }
@@ -508,8 +501,12 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
   // размер строки учитывая точность ширину и прочее
   s21_size_t siz = get_size_u(opt, z);
   // if (opt->notation && opt->specificator != 'u' && number != 0) siz +=2;
-  if(opt->minus == 0 || (((int)opt->prec-(int)s21_strlen(buff_number)>0 || opt->zero) && opt->minus)) 
-  str = print_diff_for_u(str, opt, &z, &siz, &number); //в гс объясняла, добавила еще number, чтобы проверить для 0x
+  if (opt->minus == 0 ||
+      (((int)opt->prec - (int)s21_strlen(buff_number) > 0 || opt->zero) &&
+       opt->minus))
+    str = print_diff_for_u(
+        str, opt, &z, &siz,
+        &number);  //в гс объясняла, добавила еще number, чтобы проверить для 0x
   // в цикле записывается наше число
   if (!(opt->is_precision && opt->prec == 0 && opt->width == 0) ||
       !opt->var_null) {
@@ -519,8 +516,10 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
     }
   }
   if (opt->minus == 1) {
-    if (opt->specificator == 'o' && (opt->notation && opt->specificator != 'u' && number != 0 && opt->minus == 1)){
-      z--; //костыль для теста 50 и 51 ксюша прости
+    if (opt->specificator == 'o' &&
+        (opt->notation && opt->specificator != 'u' && number != 0 &&
+         opt->minus == 1)) {
+      z--;  //костыль для теста 50 и 51 ксюша прости
     }
     str = print_diff_for_u(str, opt, &z, &siz, &number);
   }
@@ -529,31 +528,32 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
 
 /*Вывод разницы для однознакогового числа, dif - длина числа, siz - общаяя длина
  * буфера*/
-char *print_diff_for_u(char *str, options *opt, s21_size_t * dif,
-                       s21_size_t * siz, s21_size_t * number) {
-  int d =
-      (*siz) - *dif;  // разница между полным и тем что мы имеем "000123" например
+char *print_diff_for_u(char *str, options *opt, s21_size_t *dif,
+                       s21_size_t *siz, s21_size_t *number) {
+  int d = (*siz) -
+          *dif;  // разница между полным и тем что мы имеем "000123" например
   if (d < 0) {
     d = 0;
   }
 
   if (*siz == 1 && opt->zero == 1 && opt->sign == 1)
     opt->zero = 0;  // для флага ноль - страховка
-  
+
   int dif_width_prec = opt->width - opt->prec;
   if (opt->notation && opt->specificator != 'u' && *number != 0) {
     if (dif_width_prec > 0) {
-       d -=1;
-       *siz -= 1;
-       if (opt->specificator=='X' || opt->specificator == 'x'){
-        d -=1;
-        *siz -=1;
-        dif_width_prec -=2;
-       }
+      d -= 1;
+      *siz -= 1;
+      if (opt->specificator == 'X' || opt->specificator == 'x') {
+        d -= 1;
+        *siz -= 1;
+        dif_width_prec -= 2;
+      }
     }
-  } //для 0x, чтобы лишние пробелы не записывал
+  }  //для 0x, чтобы лишние пробелы не записывал
   // если ширина больше чем точность
-  while (dif_width_prec > 0 && d > 0) { // сделала d>0, было просто : d, из-за этого при d<0 заходило в цикл
+  while (dif_width_prec > 0 && d > 0) {  // сделала d>0, было просто : d, из-за
+                                         // этого при d<0 заходило в цикл
     *str = ' ';
     str++;
     d--;
@@ -561,15 +561,18 @@ char *print_diff_for_u(char *str, options *opt, s21_size_t * dif,
     dif_width_prec--;
   }
 
-    if (opt->notation && opt->specificator != 'u' && *number != 0 && opt->minus == 0) { 
-      // можно вынести в функцию мб, добавила чтобы сначала пробелы печатались, а потом 0x
+  if (opt->notation && opt->specificator != 'u' && *number != 0 &&
+      opt->minus == 0) {
+    // можно вынести в функцию мб, добавила чтобы сначала пробелы печатались, а
+    // потом 0x
     *(str++) = '0';
     if (opt->specificator == 'x' || opt->specificator == 'X') {
       *(str++) = opt->uppercase ? 'X' : 'x';
     }
   }
 
-  while ((opt->zero && d > 0) || (opt->prec - *dif > 0 && d > 0)) { // сделала d>0
+  while ((opt->zero && d > 0) ||
+         (opt->prec - *dif > 0 && d > 0)) {  // сделала d>0
     if (*siz == 1 && opt->sign == 1) {
       break;
     }
@@ -577,10 +580,11 @@ char *print_diff_for_u(char *str, options *opt, s21_size_t * dif,
     *str = sum;
     str++;
     d--;
-    (*dif)++; // так как сколько напечатает символов 0 связано с этой переменной
-    (*siz)--; 
+    (*dif)++;  // так как сколько напечатает символов 0 связано с этой
+               // переменной
+    (*siz)--;
   }
-  
+
   if (opt->zero == 0) {
     while (d > 0) {
       *str = ' ';
@@ -1039,4 +1043,3 @@ void s21_itoa(char *buf, options *opt, long int var) {
   }
   buf[i] = 0;
 }
-

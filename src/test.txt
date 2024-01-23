@@ -1,6 +1,25 @@
-tests.c:1857:F:sprintf_new:test_d_16:0: Assertion 'str1 == str2' failed: str1 == "0000000000000000001234567", str2 == "          000000001234567"
-tests.c:1869:F:sprintf_new:test_d_17:0: Assertion 'str1 == str2' failed: str1 == "0000000000000000001234567", str2 == "          000000001234567"
-tests.c:1929:F:sprintf_new:test_d_22:0: Assertion 'str1 == str2' failed: str1 == "0000000000000000001234567", str2 == "000000001234567          "
-tests.c:2149:F:sprintf_new:test_d_40:0: Assertion 'str1 == str2' failed: str1 == "0000000000007968", str2 == "000007968       "
-tests.c:2422:F:sprintf_new:test_u_13:0: Assertion 'str1 == str2' failed: str1 == "858158158000000", str2 == "000000858158158"
-tests.c:5247:F:sprintf_new:test_mix_6:0: Assertion 's21_sprintf(str1, format, 'f', 21, 42, 777.777, "Happy New Year and Merry Christmas!", 11) == __builtin___sprintf_chk (str2, 0, __builtin_object_size (str2, 2 > 1 ? 1 : 0), format, 'f', 21, 42, 777.777, "Happy New Year and Merry Christmas!", 11)' failed: s21_sprintf(str1, format, 'f', 21, 42, 777.777, "Happy New Year and Merry Christmas!", 11) == 79, __builtin___sprintf_chk (str2, 0, __builtin_object_size (str2, 2 > 1 ? 1 : 0), format, 'f', 21, 42, 777.777, "Happy New Year and Merry Christmas!", 11) == 78
+tests.c : 1857 : F : sprintf_new : test_d_16 : 0
+    : Assertion 'str1 == str2' failed : str1 == "0000000000000000001234567",
+    str2 ==
+        "          000000001234567" tests.c : 1869 : F : sprintf_new
+    : test_d_17 : 0 : Assertion 'str1 == str2' failed
+    : str1 == "0000000000000000001234567",
+    str2 ==
+        "          000000001234567" tests.c : 1929 : F : sprintf_new
+    : test_d_22 : 0 : Assertion 'str1 == str2' failed
+    : str1 == "0000000000000000001234567",
+    str2 ==
+        "000000001234567          " tests.c : 2149 : F : sprintf_new
+    : test_d_40 : 0 : Assertion 'str1 == str2' failed
+    : str1 == "0000000000007968",
+    str2 ==
+        "000007968       " tests.c : 2422 : F : sprintf_new : test_u_13 : 0
+    : Assertion 'str1 == str2' failed : str1 == "858158158000000",
+    str2 ==
+        "000000858158158" tests.c : 5247 : F : sprintf_new : test_mix_6 : 0
+    : Assertion 's21_sprintf(str1, format, ' f ', 21, 42, 777.777, "Happy New Year and Merry Christmas!", 11) == __builtin___sprintf_chk (str2, 0, __builtin_object_size (str2, 2 > 1 ? 1 : 0), format, ' f ', 21, 42, 777.777, "Happy New Year and Merry Christmas!", 11)' failed
+    : s21_sprintf(str1, format, 'f', 21, 42, 777.777,
+                  "Happy New Year and Merry Christmas!", 11) == 79,
+    __builtin___sprintf_chk(str2, 0, __builtin_object_size(str2, 2 > 1 ? 1 : 0),
+                            format, 'f', 21, 42, 777.777,
+                            "Happy New Year and Merry Christmas!", 11) == 78

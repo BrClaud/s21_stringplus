@@ -1679,7 +1679,6 @@ START_TEST(s21_sscanf_u) {
 }
 END_TEST
 
-
 START_TEST(test_d_1) {
   char str1[BUFF_SIZE];
   char str2[BUFF_SIZE];
@@ -3713,7 +3712,6 @@ END_TEST
 */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tests flags -n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tests flags -f ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 START_TEST(test_f_1) {
@@ -4680,7 +4678,6 @@ START_TEST(test_e_20) {
 }
 END_TEST
 
-
 START_TEST(test_e_22) {
   char str1[BUFF_SIZE];
   char str2[BUFF_SIZE];
@@ -5076,8 +5073,6 @@ START_TEST(test_g_4) {
 }
 END_TEST
 
-
-
 START_TEST(test_g_7) {
   char str1[BUFF_SIZE];
   char str2[BUFF_SIZE];
@@ -5252,7 +5247,6 @@ START_TEST(test_mix_4) {
   ck_assert_str_eq(str1, str2);
 }
 END_TEST
-
 
 START_TEST(test_mix_6) {
   char str1[BUFF_SIZE];
