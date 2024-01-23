@@ -6,17 +6,16 @@
 // int main (){
 //   char str1[BUFSIZE];
 //   char str2[BUFSIZE];
-//   int n1;
-//   int n2;
-// s21_sprintf(str1, "%d%n", 123, &n1);
-// sprintf(str2, "%d%n", 123, &n2);
+//   char format[] = "%f %f";
+//   float val = 101.0000006;
 
-//   printf("s21_sprintf: '%d'\n", n1);
-//   printf("    sprintf: '%d'\n", n2);
+
+//   printf("s21_sprintf: '%d'\n", s21_sprintf(str1, format, val, 101.0000006));
+//   printf("    sprintf: '%d'\n", sprintf(str2, format, val, 101.0000006));
 //   printf("s21_sprintf: '%s'\n", str1);
 //   printf("    sprintf: '%s'\n", str2);
+//   // printf("%s\n%s\n", str1, str2);
 // }
-
 
 int s21_sprintf(char *str, const char *format, ...) {
   char *s_start = str;
@@ -665,15 +664,13 @@ char *int_to_oct(long int number, char *buff_number, options *opt) {
 }
 
 char *print_float(char **str, options *opt, va_list *arguments) {
-  long double num;
+  long double num = 0;
   // определяем размерность
-  if (opt->type_qualifier == 'l') {
-    num = (double)va_arg(*arguments, double);
-  } else if (opt->type_qualifier == 'L') {
+  if (opt->type_qualifier == 'L') {
     num = (long double)va_arg(*arguments, long double);
   } else {
     num = (double)va_arg(*arguments, double);
-    num = (float)num;
+    // num = (float)num;
   }
   // если переменная ноль
   if (!num) opt->var_null = 1;
