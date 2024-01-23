@@ -2,19 +2,6 @@
 
 #include "s21_string.h"
 
-// int main (){
-//   char str1[BUFSIZE];
-//   char str2[BUFSIZE];
-//   char format[] = "%f %f";
-//   float val = 101.0000006;
-
-//   printf("s21_sprintf: '%d'\n", s21_sprintf(str1, format, val, 101.0000006));
-//   printf("    sprintf: '%d'\n", sprintf(str2, format, val, 101.0000006));
-//   printf("s21_sprintf: '%s'\n", str1);
-//   printf("    sprintf: '%s'\n", str2);
-//   // printf("%s\n%s\n", str1, str2);
-// }
-
 int s21_sprintf(char *str, const char *format, ...) {
   char *s_start = str;
   va_list arguments;
@@ -462,8 +449,7 @@ void process_width_prec_for_string(char **str, options *opt, int *prec_temp,
 
 void process_n(char *str, va_list *arguments) {
   int *pointer_int = va_arg(*arguments, int *);
-  s21_size_t la = s21_strlen(str);
-  *pointer_int = la;  // передаем указатель на строку str
+  *pointer_int = s21_strlen(str);
 }
 
 char *print_unsigned(char *str, options *opt, va_list *arguments,
@@ -477,7 +463,6 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
     number = (unsigned int)number;
 
   char buff_number[BUFSIZE] = {'\0'};
-
   if (!number) opt->var_null = 1;  // для нуля
   s21_size_t z = 0;
   if (*format == 'x' || *format == 'X')
@@ -491,18 +476,15 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
           1) {  //добавила тут условие с opt->minus для того, чтобы когда у нас
                 //нет данного условия НЕ печатало так: 0x    234
     *(str++) = '0';
-    //костыль для теста 50 и 51 ксюша прости
-    if (opt->specificator == 'o') z++;
+    if (opt->specificator == 'o') z++;  //для теста 50 и 51
     if (*format == 'x' || *format == 'X') {
       *(str++) = opt->uppercase ? 'X' : 'x';
     }
   }
-
-  // размер строки изначаьлный "123" == 3
+  // размер строки изначальный "123" == 3
   z += (s21_size_t)s21_strlen(buff_number);
   // размер строки учитывая точность ширину и прочее
   s21_size_t siz = get_size_u(opt, z);
-  // if (opt->notation && opt->specificator != 'u' && number != 0) siz +=2;
   if (opt->minus == 0 ||
       (((int)opt->prec - (int)s21_strlen(buff_number) > 0 || opt->zero) &&
        opt->minus))
@@ -521,7 +503,7 @@ char *print_unsigned(char *str, options *opt, va_list *arguments,
     if (opt->specificator == 'o' &&
         (opt->notation && opt->specificator != 'u' && number != 0 &&
          opt->minus == 1)) {
-      z--;  //костыль для теста 50 и 51 ксюша прости
+      z--;  // для теста 50 и 51
     }
     str = print_diff_for_u(str, opt, &z, &siz, &number);
   }
@@ -553,7 +535,6 @@ char *print_diff_for_u(char *str, options *opt, s21_size_t *dif,
       }
     }
   }  //для 0x, чтобы лишние пробелы не записывал
-  // если ширина больше чем точность
   while (dif_width_prec > 0 && d > 0) {  // сделала d>0, было просто : d, из-за
                                          // этого при d<0 заходило в цикл
     *str = ' ';
